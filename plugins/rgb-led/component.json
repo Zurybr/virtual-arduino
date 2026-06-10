@@ -1,0 +1,24 @@
+{
+  "name": "rgb-led",
+  "displayName": "RGB LED",
+  "version": "1.0.0",
+  "description": "Red-Green-Blue LED with individual PWM control",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "r", "type": "digital-input", "label": "Red (PWM)" },
+      { "id": "g", "type": "digital-input", "label": "Green (PWM)" },
+      { "id": "b", "type": "digital-input", "label": "Blue (PWM)" },
+      { "id": "gnd", "type": "ground", "label": "GND" }
+    ],
+    "power": { "minVoltage": 1.8, "maxVoltage": 5, "typicalCurrent": "60mA" },
+    "protocols": ["gpio", "pwm"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read"],
+  "category": "basic",
+  "tags": ["rgb", "led", "light", "basic"]
+}

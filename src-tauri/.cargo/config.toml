@@ -1,0 +1,5 @@
+[patch.crates-io.tao]
+git = "https://github.com/tauri-apps/tao.git"
+tag = "tao-v0.35.3"
+default-features = false
+features = ["rwh_06", "x11"]

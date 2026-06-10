@@ -1,0 +1,22 @@
+{
+  "name": "led",
+  "displayName": "LED",
+  "version": "1.0.0",
+  "description": "Standard light-emitting diode",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "anode", "type": "digital-input", "label": "Anode (+)" },
+      { "id": "cathode", "type": "ground", "label": "Cathode (-)" }
+    ],
+    "power": { "minVoltage": 1.8, "maxVoltage": 5, "typicalCurrent": "20mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read"],
+  "category": "basic",
+  "tags": ["led", "light", "basic"]
+}

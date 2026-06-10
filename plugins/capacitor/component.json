@@ -1,0 +1,22 @@
+{
+  "name": "capacitor",
+  "displayName": "Capacitor",
+  "version": "1.0.0",
+  "description": "Capacitor with charge and discharge timing behavior simulation",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "terminal-a", "type": "digital-input", "label": "Terminal A" },
+      { "id": "terminal-b", "type": "digital-output", "label": "Terminal B" }
+    ],
+    "power": { "minVoltage": 0, "maxVoltage": 5, "typicalCurrent": "0mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read", "gpio:write"],
+  "category": "basic",
+  "tags": ["capacitor", "passive", "basic"]
+}

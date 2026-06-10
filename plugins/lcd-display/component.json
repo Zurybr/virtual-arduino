@@ -1,0 +1,26 @@
+{
+  "name": "lcd-display",
+  "displayName": "LCD 16x2 Display",
+  "version": "1.0.0",
+  "description": "16x2 character LCD display with HD44780-compatible 4-bit interface",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "rs", "type": "digital-input", "label": "RS" },
+      { "id": "en", "type": "digital-input", "label": "EN" },
+      { "id": "d4", "type": "digital-input", "label": "D4" },
+      { "id": "d5", "type": "digital-input", "label": "D5" },
+      { "id": "d6", "type": "digital-input", "label": "D6" },
+      { "id": "d7", "type": "digital-input", "label": "D7" }
+    ],
+    "power": { "minVoltage": 4.5, "maxVoltage": 5, "typicalCurrent": "2mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read"],
+  "category": "display",
+  "tags": ["lcd", "display", "16x2", "hd44780"]
+}

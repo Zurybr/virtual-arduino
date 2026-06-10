@@ -1,0 +1,26 @@
+{
+  "name": "buzzer",
+  "displayName": "Buzzer",
+  "version": "1.0.0",
+  "description": "Piezo buzzer that generates audible tones",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "vcc", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" },
+      { "id": "signal", "type": "digital-input", "label": "Signal" }
+    ],
+    "power": { "minVoltage": 3.3, "maxVoltage": 5, "typicalCurrent": "30mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read"],
+  "category": "actuator",
+  "tags": ["buzzer", "sound", "actuator"],
+  "config": {
+    "frequency": { "type": "number", "default": 440, "min": 20, "max": 20000, "unit": "Hz" }
+  }
+}

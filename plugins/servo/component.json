@@ -1,0 +1,23 @@
+{
+  "name": "servo",
+  "displayName": "Servo Motor",
+  "version": "1.0.0",
+  "description": "Standard hobby servo motor controlled by PWM",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "vcc", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" },
+      { "id": "signal", "type": "pwm", "label": "Signal" }
+    ],
+    "power": { "minVoltage": 4.8, "maxVoltage": 6, "typicalCurrent": "200mA" },
+    "protocols": ["pwm"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["pwm:read"],
+  "category": "actuator",
+  "tags": ["servo", "motor", "pwm"]
+}

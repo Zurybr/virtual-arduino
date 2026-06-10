@@ -1,0 +1,24 @@
+{
+  "name": "template",
+  "displayName": "Template Component",
+  "version": "1.0.0",
+  "description": "Reference template for building component plugins",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "pin-a", "type": "digital-input", "label": "Pin A" },
+      { "id": "pin-b", "type": "digital-output", "label": "Pin B" },
+      { "id": "vcc", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" }
+    ],
+    "power": { "minVoltage": 3.3, "maxVoltage": 5, "typicalCurrent": "10mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read", "gpio:write"],
+  "category": "basic",
+  "tags": ["template", "reference"]
+}

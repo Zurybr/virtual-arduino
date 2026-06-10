@@ -1,0 +1,23 @@
+{
+  "name": "transistor",
+  "displayName": "NPN Transistor",
+  "version": "1.0.0",
+  "description": "NPN bipolar junction transistor for signal amplification and switching",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "collector", "type": "digital-input", "label": "Collector" },
+      { "id": "base", "type": "digital-input", "label": "Base" },
+      { "id": "emitter", "type": "ground", "label": "Emitter" }
+    ],
+    "power": { "minVoltage": 0.7, "maxVoltage": 5, "typicalCurrent": "100mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read"],
+  "category": "ic",
+  "tags": ["transistor", "npn", "bjt", "ic"]
+}

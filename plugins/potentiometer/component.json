@@ -1,0 +1,23 @@
+{
+  "name": "potentiometer",
+  "displayName": "Potentiometer",
+  "version": "1.0.0",
+  "description": "Adjustable potentiometer with analog output",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "terminal-a", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "wiper", "type": "analog-output", "label": "Wiper" },
+      { "id": "terminal-b", "type": "ground", "label": "GND" }
+    ],
+    "power": { "minVoltage": 0, "maxVoltage": 5, "typicalCurrent": "1mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read", "gpio:write"],
+  "category": "basic",
+  "tags": ["potentiometer", "analog", "variable"]
+}

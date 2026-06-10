@@ -1,0 +1,23 @@
+{
+  "name": "photoresistor",
+  "displayName": "Photoresistor",
+  "version": "1.0.0",
+  "description": "Light-dependent resistor that varies resistance based on ambient light",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "vcc", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" },
+      { "id": "output", "type": "analog-output", "label": "Output" }
+    ],
+    "power": { "minVoltage": 3.3, "maxVoltage": 5, "typicalCurrent": "1mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:write"],
+  "category": "sensor",
+  "tags": ["photoresistor", "ldr", "light", "sensor"]
+}

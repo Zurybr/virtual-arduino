@@ -1,0 +1,25 @@
+{
+  "name": "shift-register",
+  "displayName": "Shift Register (74HC595)",
+  "version": "1.0.0",
+  "description": "8-bit serial-in parallel-out shift register for output expansion",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "vcc", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" },
+      { "id": "ser", "type": "digital-input", "label": "SER" },
+      { "id": "srclk", "type": "digital-input", "label": "SRCLK" },
+      { "id": "rclk", "type": "digital-input", "label": "RCLK" }
+    ],
+    "power": { "minVoltage": 2, "maxVoltage": 6, "typicalCurrent": "1mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read"],
+  "category": "ic",
+  "tags": ["shift-register", "74hc595", "ic", "expansion"]
+}

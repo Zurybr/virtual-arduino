@@ -1,0 +1,22 @@
+{
+  "name": "diode",
+  "displayName": "Diode",
+  "version": "1.0.0",
+  "description": "Standard diode allowing current flow in one direction with voltage drop",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "anode", "type": "digital-input", "label": "Anode (+)" },
+      { "id": "cathode", "type": "digital-output", "label": "Cathode (-)" }
+    ],
+    "power": { "minVoltage": 0.3, "maxVoltage": 5, "typicalCurrent": "20mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read", "gpio:write"],
+  "category": "basic",
+  "tags": ["diode", "rectifier", "basic"]
+}

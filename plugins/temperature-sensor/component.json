@@ -1,0 +1,23 @@
+{
+  "name": "temperature-sensor",
+  "displayName": "Temperature Sensor",
+  "version": "1.0.0",
+  "description": "Analog temperature sensor with adjustable temperature output",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "vcc", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" },
+      { "id": "data", "type": "analog-output", "label": "Data" }
+    ],
+    "power": { "minVoltage": 3.3, "maxVoltage": 5, "typicalCurrent": "5mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:write"],
+  "category": "sensor",
+  "tags": ["temperature", "thermistor", "sensor"]
+}

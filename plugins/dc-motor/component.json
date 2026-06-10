@@ -1,0 +1,25 @@
+{
+  "name": "dc-motor",
+  "displayName": "DC Motor",
+  "version": "1.0.0",
+  "description": "DC motor with PWM speed and dual-direction control",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "vcc", "type": "power", "label": "VCC", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" },
+      { "id": "enable", "type": "digital-input", "label": "Enable (PWM)" },
+      { "id": "in1", "type": "digital-input", "label": "IN1" },
+      { "id": "in2", "type": "digital-input", "label": "IN2" }
+    ],
+    "power": { "minVoltage": 3, "maxVoltage": 12, "typicalCurrent": "200mA" },
+    "protocols": ["gpio", "pwm"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read"],
+  "category": "actuator",
+  "tags": ["motor", "dc", "actuator"]
+}

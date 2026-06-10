@@ -1,0 +1,131 @@
+# Contract: Plugin Manifest JSON Schema
+
+**Version**: 1.0.0
+**Description**: JSON Schema for `component.json` validation at plugin load time.
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Arduino Simulator Component Plugin Manifest",
+  "type": "object",
+  "required": ["name", "displayName", "version", "description", "author", "license", "engines", "hardware", "main", "category"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "minLength": 2,
+      "maxLength": 64,
+      "description": "Unique kebab-case plugin identifier"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?$",
+      "description": "SemVer version"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "author": {
+      "type": "string"
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri"
+    },
+    "engines": {
+      "type": "object",
+      "required": ["simulator", "pluginApi"],
+      "properties": {
+        "simulator": {
+          "type": "string",
+          "description": "SemVer range for minimum simulator version"
+        },
+        "pluginApi": {
+          "type": "string",
+          "description": "SemVer range for plugin API version"
+        }
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "required": ["pins", "power", "protocols"],
+      "properties": {
+        "pins": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "label"],
+            "properties": {
+              "id": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": ["power", "ground", "digital-input", "digital-output", "analog-input", "analog-output", "pwm", "i2c-sda", "i2c-scl", "spi-mosi", "spi-miso", "spi-sck", "spi-ss", "uart-rx", "uart-tx"]
+              },
+              "label": { "type": "string" },
+              "voltage": { "type": "number", "minimum": 0 }
+            }
+          }
+        },
+        "power": {
+          "type": "object",
+          "required": ["minVoltage", "maxVoltage", "typicalCurrent"],
+          "properties": {
+            "minVoltage": { "type": "number", "minimum": 0 },
+            "maxVoltage": { "type": "number", "minimum": 0 },
+            "typicalCurrent": { "type": "string" }
+          }
+        },
+        "protocols": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["gpio", "i2c", "spi", "uart", "pwm"]
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "properties": {
+        "icon": { "type": "string", "description": "Path to SVG icon file" },
+        "schematic": { "type": "string", "description": "Path to schematic SVG" }
+      }
+    },
+    "main": {
+      "type": "string",
+      "description": "ESM entry point relative path"
+    },
+    "permissions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "category": {
+      "type": "string",
+      "enum": ["basic", "sensor", "actuator", "display", "ic", "communication", "power"]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "maxItems": 10
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}
+```

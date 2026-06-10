@@ -36,12 +36,65 @@ const PLACEHOLDER_SERIAL = [
   "Ready.",
 ];
 
-const PALETTE_ITEMS: Array<{ type: string; label: string; icon: string }> = [
-  { type: "led", label: "LED", icon: "💡" },
-  { type: "resistor", label: "Resistor", icon: "▬▬" },
-  { type: "pushbutton", label: "Button", icon: "⬜" },
-  { type: "potentiometer", label: "Potentiometer", icon: "🔘" },
-  { type: "servo", label: "Servo", icon: "⚙" },
+interface PaletteItem {
+  type: string;
+  label: string;
+  icon: string;
+}
+
+interface PaletteCategory {
+  name: string;
+  items: PaletteItem[];
+}
+
+const PALETTE_CATEGORIES: PaletteCategory[] = [
+  {
+    name: "Boards",
+    items: [
+      { type: "protoboard", label: "Breadboard", icon: "\u{1F532}" },
+    ],
+  },
+  {
+    name: "Basic",
+    items: [
+      { type: "led", label: "LED", icon: "\u{1F4A1}" },
+      { type: "resistor", label: "Resistor", icon: "\u{1F504}" },
+      { type: "pushbutton", label: "Button", icon: "\u{2B1C}" },
+      { type: "potentiometer", label: "Potentiometer", icon: "\u{1F518}" },
+      { type: "capacitor", label: "Capacitor", icon: "\u{1F50B}" },
+      { type: "diode", label: "Diode", icon: "\u{25B6}" },
+      { type: "transistor", label: "Transistor", icon: "\u{1F53A}" },
+    ],
+  },
+  {
+    name: "Outputs",
+    items: [
+      { type: "rgb-led", label: "RGB LED", icon: "\u{1F308}" },
+      { type: "buzzer", label: "Buzzer", icon: "\u{1F514}" },
+      { type: "servo", label: "Servo", icon: "\u{2699}" },
+      { type: "dc-motor", label: "DC Motor", icon: "\u{1F300}" },
+      { type: "lcd-display", label: "LCD 16x2", icon: "\u{1F4FA}" },
+    ],
+  },
+  {
+    name: "Sensors",
+    items: [
+      { type: "photoresistor", label: "Photoresistor", icon: "\u{2600}" },
+      { type: "temperature-sensor", label: "Temp Sensor", icon: "\u{1F321}" },
+    ],
+  },
+  {
+    name: "ICs",
+    items: [
+      { type: "shift-register", label: "Shift Register", icon: "\u{1F4E6}" },
+    ],
+  },
+  {
+    name: "Connectors",
+    items: [
+      { type: "usb-connector", label: "USB Power", icon: "\u{1F50C}" },
+    ],
+  },
 ];
 
 const INITIAL_COMPONENTS: PlacedComponent[] = [
@@ -54,20 +107,20 @@ const INITIAL_COMPONENTS: PlacedComponent[] = [
     state: {},
   },
   {
+    id: "protoboard-1",
+    type: "protoboard",
+    x: 750,
+    y: 300,
+    rotation: 0,
+    state: {},
+  },
+  {
     id: "led-1",
     type: "led",
     x: 560,
     y: 260,
     rotation: 0,
     state: { on: false, color: "#ff0000" },
-  },
-  {
-    id: "resistor-1",
-    type: "resistor",
-    x: 560,
-    y: 360,
-    rotation: 0,
-    state: {},
   },
 ];
 
@@ -153,15 +206,25 @@ const layoutStyles: Record<string, React.CSSProperties> = {
     fontWeight: "bold",
     color: "#ccc",
   },
+  categoryHeader: {
+    padding: "6px 12px",
+    backgroundColor: "#2a2a2a",
+    borderBottom: "1px solid #383838",
+    fontSize: "10px",
+    fontWeight: "bold",
+    color: "#888",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.5px",
+  },
   paletteItem: {
     display: "flex",
     alignItems: "center",
     gap: "8px",
-    padding: "8px 12px",
+    padding: "6px 12px",
     fontSize: "12px",
     color: "#aaa",
     cursor: "grab",
-    borderBottom: "1px solid #333",
+    borderBottom: "1px solid #2e2e2e",
     transition: "background-color 0.15s",
     userSelect: "none" as const,
   },
@@ -170,14 +233,14 @@ const layoutStyles: Record<string, React.CSSProperties> = {
     overflowY: "auto",
   },
   paletteIcon: {
-    width: "24px",
-    height: "24px",
+    width: "22px",
+    height: "22px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#333",
     borderRadius: "3px",
-    fontSize: "12px",
+    fontSize: "11px",
   },
 };
 
@@ -258,12 +321,18 @@ export function App() {
         startPin.pinId.includes("vcc") ||
         endPin.pinId.includes("vcc") ||
         startPin.pinId.includes("vin") ||
-        endPin.pinId.includes("vin");
+        endPin.pinId.includes("vin") ||
+        startPin.pinId.includes("pos") ||
+        endPin.pinId.includes("pos") ||
+        startPin.pinId.includes("5v") ||
+        endPin.pinId.includes("5v");
       const isGround =
         startPin.pinId.includes("gnd") ||
         endPin.pinId.includes("gnd") ||
         startPin.pinId.includes("cathode") ||
-        endPin.pinId.includes("cathode");
+        endPin.pinId.includes("cathode") ||
+        startPin.pinId.includes("neg") ||
+        endPin.pinId.includes("neg");
       const color = isPower ? "#e53935" : isGround ? "#424242" : "#1e88e5";
 
       setWires((prev) => [
@@ -310,15 +379,20 @@ export function App() {
         <div style={layoutStyles.leftPanel}>
           <div style={layoutStyles.paletteHeader}>Components</div>
           <div style={layoutStyles.paletteList}>
-            {PALETTE_ITEMS.map((item) => (
-              <div
-                key={item.type}
-                style={layoutStyles.paletteItem}
-                draggable
-                onDragStart={(e) => handleDragStart(e, item.type)}
-              >
-                <span style={layoutStyles.paletteIcon}>{item.icon}</span>
-                {item.label}
+            {PALETTE_CATEGORIES.map((category) => (
+              <div key={category.name}>
+                <div style={layoutStyles.categoryHeader}>{category.name}</div>
+                {category.items.map((item) => (
+                  <div
+                    key={item.type}
+                    style={layoutStyles.paletteItem}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, item.type)}
+                  >
+                    <span style={layoutStyles.paletteIcon}>{item.icon}</span>
+                    {item.label}
+                  </div>
+                ))}
               </div>
             ))}
           </div>

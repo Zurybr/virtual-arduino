@@ -54,6 +54,9 @@ function getPinWorldPosition(
   };
 }
 
+const SNAP_THRESHOLD_SQ = 400;
+const BREADBOARD_MAX_DIST_SQ = 250000;
+
 export const Workspace: React.FC<WorkspaceProps> = ({
   components,
   wires,
@@ -95,6 +98,9 @@ export const Workspace: React.FC<WorkspaceProps> = ({
   const lastPointerPos = useRef({ x: 0, y: 0 });
   const spaceHeld = useRef(false);
 
+  const componentsRef = useRef(components);
+  componentsRef.current = components;
+
   const componentPins = useMemo(() => {
     const map: Record<string, PinConnectionPoint[]> = {};
     for (const comp of components) {
@@ -102,6 +108,9 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     }
     return map;
   }, [components]);
+
+  const componentPinsRef = useRef(componentPins);
+  componentPinsRef.current = componentPins;
 
   const computedWires = useMemo(() => {
     return wires.map((wire) => {
@@ -414,7 +423,60 @@ export const Workspace: React.FC<WorkspaceProps> = ({
 
   const handleComponentDragEnd = useCallback(
     (id: string, x: number, y: number) => {
-      onComponentMoved(id, snapToGrid(x), snapToGrid(y));
+      let finalX = snapToGrid(x);
+      let finalY = snapToGrid(y);
+
+      const comps = componentsRef.current;
+      const comp = comps.find((c) => c.id === id);
+
+      if (
+        comp &&
+        comp.type !== "protoboard" &&
+        comp.type !== "arduino-uno"
+      ) {
+        const compPinData = componentPinsRef.current[id];
+        const breadboards = comps.filter((c) => c.type === "protoboard");
+
+        if (breadboards.length > 0 && compPinData && compPinData.length > 0) {
+          let bestDistSq = SNAP_THRESHOLD_SQ;
+          let snapDx = 0;
+          let snapDy = 0;
+
+          for (const bb of breadboards) {
+            const bbdx = finalX - bb.x;
+            const bbdy = finalY - bb.y;
+            if (bbdx * bbdx + bbdy * bbdy > BREADBOARD_MAX_DIST_SQ) continue;
+
+            const bbPinData = componentPinsRef.current[bb.id];
+            if (!bbPinData) continue;
+
+            for (const compPin of compPinData) {
+              const pinWorldX = finalX + compPin.x;
+              const pinWorldY = finalY + compPin.y;
+
+              for (const bbPin of bbPinData) {
+                const holeWorldX = bb.x + bbPin.x;
+                const holeWorldY = bb.y + bbPin.y;
+
+                const dx = pinWorldX - holeWorldX;
+                const dy = pinWorldY - holeWorldY;
+                const distSq = dx * dx + dy * dy;
+
+                if (distSq < bestDistSq) {
+                  bestDistSq = distSq;
+                  snapDx = holeWorldX - pinWorldX;
+                  snapDy = holeWorldY - pinWorldY;
+                }
+              }
+            }
+          }
+
+          finalX += snapDx;
+          finalY += snapDy;
+        }
+      }
+
+      onComponentMoved(id, finalX, finalY);
     },
     [onComponentMoved],
   );

@@ -74,10 +74,11 @@ function getArduinoUnoPins(): PinConnectionPoint[] {
   ];
 
   const pins: PinConnectionPoint[] = [];
-  const boardW = 200;
-  const boardH = 130;
-  const leftX = -boardW / 2;
-  const rightX = boardW / 2;
+  const boardW = 300;
+  const boardH = 200;
+  const margin = 15;
+  const leftX = -boardW / 2 + margin;
+  const rightX = boardW / 2 - margin;
   const pinSpacingY = 14;
   const topStartY = -boardH / 2 + 20;
 
@@ -103,13 +104,13 @@ function getArduinoUnoPins(): PinConnectionPoint[] {
     });
   });
 
-  const bottomStartX = -50;
+  const bottomStartX = -70;
   bottomPins.forEach((p, i) => {
     pins.push({
       id: `analog-bottom-${i}`,
       label: p.label,
-      x: bottomStartX + i * 18,
-      y: boardH / 2,
+      x: bottomStartX + i * 24,
+      y: boardH / 2 - margin,
       type: p.type,
       connected: false,
     });
@@ -230,88 +231,88 @@ export function getComponentPins(
 const ArduinoUnoBody: React.FC = () => (
   <Group>
     <Rect
-      x={-100}
-      y={-65}
-      width={200}
-      height={130}
+      x={-150}
+      y={-100}
+      width={300}
+      height={200}
       fill="#2d5a27"
-      cornerRadius={[4, 4, 4, 4]}
+      cornerRadius={[6, 6, 6, 6]}
       stroke="#1a3a15"
       strokeWidth={1.5}
     />
     <Rect
-      x={-80}
-      y={-55}
-      width={35}
-      height={25}
+      x={-120}
+      y={-85}
+      width={50}
+      height={35}
       fill="#888"
       cornerRadius={2}
       stroke="#666"
       strokeWidth={1}
     />
     <Text
-      x={-78}
-      y={-48}
+      x={-116}
+      y={-75}
       text="USB"
-      fontSize={7}
+      fontSize={10}
       fill="#444"
       fontFamily="monospace"
     />
     <Rect
-      x={60}
-      y={-55}
-      width={30}
-      height={22}
+      x={90}
+      y={-85}
+      width={42}
+      height={30}
       fill="#333"
       cornerRadius={3}
       stroke="#555"
       strokeWidth={1}
     />
-    <Circle x={75} y={-44} radius={4} fill="#222" stroke="#444" strokeWidth={0.5} />
-    <Rect x={-88} y={-30} width={16} height={16} fill="#333" cornerRadius={1} stroke="#555" strokeWidth={0.5} />
-    <Circle x={-80} y={-22} radius={2} fill="#888" />
-    <Rect x={72} y={-30} width={16} height={16} fill="#333" cornerRadius={1} stroke="#555" strokeWidth={0.5} />
-    <Circle x={80} y={-22} radius={2} fill="#888" />
+    <Circle x={111} y={-70} radius={6} fill="#222" stroke="#444" strokeWidth={0.5} />
+    <Rect x={-132} y={-50} width={22} height={22} fill="#333" cornerRadius={1} stroke="#555" strokeWidth={0.5} />
+    <Circle x={-121} y={-39} radius={3} fill="#888" />
+    <Rect x={108} y={-50} width={22} height={22} fill="#333" cornerRadius={1} stroke="#555" strokeWidth={0.5} />
+    <Circle x={119} y={-39} radius={3} fill="#888" />
     <Text
-      x={-40}
-      y={-60}
+      x={-55}
+      y={-93}
       text="ARDUINO UNO"
-      fontSize={8}
+      fontSize={11}
       fill="#c0d0b0"
       fontFamily="monospace"
       fontStyle="bold"
     />
     <Text
-      x={-30}
-      y={-50}
+      x={-42}
+      y={-80}
       text="REV3"
-      fontSize={6}
+      fontSize={8}
       fill="#8a9a7a"
       fontFamily="monospace"
     />
-    <Rect x={-20} y={10} width={40} height={18} fill="#111" cornerRadius={1} />
-    <Rect x={-18} y={12} width={36} height={14} fill="#1a1a2e" cornerRadius={1} />
+    <Rect x={-30} y={10} width={60} height={25} fill="#111" cornerRadius={1} />
+    <Rect x={-27} y={13} width={54} height={19} fill="#1a1a2e" cornerRadius={1} />
     <Text
-      x={-15}
-      y={14}
+      x={-22}
+      y={16}
       text="ATmega"
-      fontSize={5}
+      fontSize={7}
       fill="#4a6"
       fontFamily="monospace"
     />
     <Text
-      x={-15}
-      y={20}
+      x={-22}
+      y={24}
       text="328P"
-      fontSize={5}
+      fontSize={7}
       fill="#4a6"
       fontFamily="monospace"
     />
-    <Rect x={30} y={30} width={8} height={12} fill="#ff8800" cornerRadius={1} />
-    <Circle x={-75} y={45} radius={5} fill="#333" stroke="#555" strokeWidth={0.5} />
-    <Circle x={75} y={45} radius={5} fill="#333" stroke="#555" strokeWidth={0.5} />
-    <Line points={[-60, -65, -60, -58]} stroke="#ffd700" strokeWidth={1.5} />
-    <Line points={[60, -65, 60, -58]} stroke="#ffd700" strokeWidth={1.5} />
+    <Rect x={45} y={50} width={12} height={18} fill="#ff8800" cornerRadius={1} />
+    <Circle x={-110} y={72} radius={7} fill="#333" stroke="#555" strokeWidth={0.5} />
+    <Circle x={110} y={72} radius={7} fill="#333" stroke="#555" strokeWidth={0.5} />
+    <Line points={[-90, -100, -90, -90]} stroke="#ffd700" strokeWidth={2} />
+    <Line points={[90, -100, 90, -90]} stroke="#ffd700" strokeWidth={2} />
   </Group>
 );
 
@@ -646,10 +647,10 @@ export const ComponentItem: React.FC<ComponentItemProps> = ({
       ))}
       {selected && (
         <Rect
-          x={component.type === "arduino-uno" ? -105 : -40}
-          y={component.type === "arduino-uno" ? -70 : -25}
-          width={component.type === "arduino-uno" ? 210 : 80}
-          height={component.type === "arduino-uno" ? 140 : 55}
+          x={component.type === "arduino-uno" ? -155 : -40}
+          y={component.type === "arduino-uno" ? -105 : -25}
+          width={component.type === "arduino-uno" ? 310 : 80}
+          height={component.type === "arduino-uno" ? 210 : 55}
           stroke="#4488ff"
           strokeWidth={1.5}
           dash={[6, 4]}

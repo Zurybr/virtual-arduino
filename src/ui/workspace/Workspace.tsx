@@ -4,7 +4,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import type Konva from "konva";
 import { DotGrid } from "./DotGrid";
 import { ComponentItem, getComponentPins } from "./ComponentItem";
-import { WireLayer } from "./WireLayer";
+import { WireLayer, buildBezierPoints } from "./WireLayer";
 import { InteractionLayer } from "./InteractionLayer";
 import {
   MIN_ZOOM,
@@ -102,6 +102,26 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     }
     return map;
   }, [components]);
+
+  const computedWires = useMemo(() => {
+    return wires.map((wire) => {
+      const startPos = getPinWorldPosition(
+        wire.startPin.componentId,
+        wire.startPin.pinId,
+        components,
+        componentPins,
+      );
+      const endPos = getPinWorldPosition(
+        wire.endPin.componentId,
+        wire.endPin.pinId,
+        components,
+        componentPins,
+      );
+      if (!startPos || !endPos) return wire;
+      const points = buildBezierPoints(startPos.x, startPos.y, endPos.x, endPos.y);
+      return { ...wire, points };
+    });
+  }, [wires, components, componentPins]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -492,7 +512,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
           />
         </Layer>
         <Layer name="wire-layer">
-          <WireLayer wires={wires} previewWire={previewWire} />
+          <WireLayer wires={computedWires} previewWire={previewWire} />
         </Layer>
         <Layer name="components-layer">
           {components.map((comp) => (

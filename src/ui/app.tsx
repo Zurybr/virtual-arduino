@@ -3,8 +3,20 @@ import type { SimulationStatus } from "../types";
 import { SimControls } from "./toolbar/sim-controls";
 import { PinInspector } from "./debugger/pin-inspector";
 import { SerialMonitor } from "./serial-monitor";
+import { CodeEditor } from "./editor/code-editor";
 import { Workspace } from "./workspace/Workspace";
 import type { PlacedComponent, Wire } from "./workspace/types";
+
+const DEFAULT_SKETCH = `void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(1000);
+  digitalWrite(13, LOW);
+  delay(1000);
+}`;
 
 const PLACEHOLDER_PINS = [
   { id: "d0", label: "D0", mode: "INPUT", value: "LOW", busId: null },
@@ -108,6 +120,31 @@ const layoutStyles: Record<string, React.CSSProperties> = {
     flexDirection: "column",
     borderTop: "1px solid #444",
   },
+  tabHeader: {
+    display: "flex",
+    backgroundColor: "#252526",
+    borderBottom: "1px solid #444",
+  },
+  tab: {
+    padding: "4px 16px",
+    fontSize: "12px",
+    color: "#888",
+    cursor: "pointer",
+    border: "none",
+    background: "none",
+    borderBottom: "2px solid transparent",
+    fontFamily: "'Segoe UI', system-ui, sans-serif",
+  },
+  tabActive: {
+    padding: "4px 16px",
+    fontSize: "12px",
+    color: "#ccc",
+    cursor: "pointer",
+    border: "none",
+    background: "none",
+    borderBottom: "2px solid #4488ff",
+    fontFamily: "'Segoe UI', system-ui, sans-serif",
+  },
   paletteHeader: {
     padding: "10px 12px",
     backgroundColor: "#2d2d2d",
@@ -151,6 +188,8 @@ export function App() {
   const [serialOutput, setSerialOutput] = useState<string[]>(PLACEHOLDER_SERIAL);
   const [components, setComponents] = useState<PlacedComponent[]>(INITIAL_COMPONENTS);
   const [wires, setWires] = useState<Wire[]>(INITIAL_WIRES);
+  const [sketchCode, setSketchCode] = useState<string>(DEFAULT_SKETCH);
+  const [bottomTab, setBottomTab] = useState<"serial" | "editor">("serial");
 
   const handleRun = useCallback(() => setStatus("RUNNING"), []);
   const handleStop = useCallback(() => setStatus("STOPPED"), []);
@@ -297,12 +336,30 @@ export function App() {
             onComponentSelected={handleComponentSelected}
           />
           <div style={layoutStyles.bottomPanel}>
-            <SerialMonitor
-              output={serialOutput}
-              onSend={handleSend}
-              baudRate={9600}
-              onClear={handleClear}
-            />
+            <div style={layoutStyles.tabHeader}>
+              <button
+                style={bottomTab === "serial" ? layoutStyles.tabActive : layoutStyles.tab}
+                onClick={() => setBottomTab("serial")}
+              >
+                Serial Monitor
+              </button>
+              <button
+                style={bottomTab === "editor" ? layoutStyles.tabActive : layoutStyles.tab}
+                onClick={() => setBottomTab("editor")}
+              >
+                Code Editor
+              </button>
+            </div>
+            {bottomTab === "serial" ? (
+              <SerialMonitor
+                output={serialOutput}
+                onSend={handleSend}
+                baudRate={9600}
+                onClear={handleClear}
+              />
+            ) : (
+              <CodeEditor code={sketchCode} onCodeChange={setSketchCode} />
+            )}
           </div>
         </div>
         <div style={layoutStyles.rightPanel}>

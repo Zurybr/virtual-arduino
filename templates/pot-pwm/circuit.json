@@ -1,0 +1,76 @@
+{
+  "name": "Potentiometer + PWM LED — Analog I/O",
+  "description": "Potentiometer on A0 controls LED brightness on pin 9 (PWM). Demonstrates analogRead + analogWrite. USB connector for power.",
+  "version": "1.0.0",
+  "board": {
+    "model": "ATMEGA328P",
+    "id": "arduino-uno",
+    "position": { "x": 300, "y": 200 }
+  },
+  "components": [
+    {
+      "plugin": "usb-connector",
+      "instanceId": "usb-1",
+      "position": { "x": 80, "y": 220 },
+      "config": { "connected": true }
+    },
+    {
+      "plugin": "potentiometer",
+      "instanceId": "pot-1",
+      "position": { "x": 140, "y": 100 }
+    },
+    {
+      "plugin": "rgb-led",
+      "instanceId": "rgb-1",
+      "position": { "x": 520, "y": 120 }
+    },
+    {
+      "plugin": "resistor",
+      "instanceId": "r1",
+      "position": { "x": 440, "y": 100 },
+      "config": { "resistance": 220 }
+    }
+  ],
+  "wires": [
+    {
+      "id": "w-power",
+      "from": { "parentId": "usb-1", "pinId": "vcc", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "5V", "parentType": "board" }
+    },
+    {
+      "id": "w-gnd",
+      "from": { "parentId": "usb-1", "pinId": "gnd", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    },
+    {
+      "id": "w-pot-vcc",
+      "from": { "parentId": "arduino-uno", "pinId": "5V", "parentType": "board" },
+      "to": { "parentId": "pot-1", "pinId": "terminal-a", "parentType": "component" }
+    },
+    {
+      "id": "w-pot-a0",
+      "from": { "parentId": "pot-1", "pinId": "wiper", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "A0", "parentType": "board" }
+    },
+    {
+      "id": "w-pot-gnd",
+      "from": { "parentId": "pot-1", "pinId": "terminal-b", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    },
+    {
+      "id": "w-d9-r",
+      "from": { "parentId": "arduino-uno", "pinId": "D9", "parentType": "board" },
+      "to": { "parentId": "r1", "pinId": "terminal-a", "parentType": "component" }
+    },
+    {
+      "id": "w-r-led",
+      "from": { "parentId": "r1", "pinId": "terminal-b", "parentType": "component" },
+      "to": { "parentId": "rgb-1", "pinId": "red", "parentType": "component" }
+    },
+    {
+      "id": "w-led-gnd",
+      "from": { "parentId": "rgb-1", "pinId": "gnd", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    }
+  ]
+}

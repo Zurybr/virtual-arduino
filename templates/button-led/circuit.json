@@ -1,0 +1,87 @@
+{
+  "name": "Button + LED — Digital Input",
+  "description": "Pushbutton on pin 2 controls LED on pin 13. Demonstrates digital input + output. USB connector for power.",
+  "version": "1.0.0",
+  "board": {
+    "model": "ATMEGA328P",
+    "id": "arduino-uno",
+    "position": { "x": 300, "y": 200 }
+  },
+  "components": [
+    {
+      "plugin": "usb-connector",
+      "instanceId": "usb-1",
+      "position": { "x": 80, "y": 220 },
+      "config": { "connected": true }
+    },
+    {
+      "plugin": "pushbutton",
+      "instanceId": "btn-1",
+      "position": { "x": 140, "y": 100 }
+    },
+    {
+      "plugin": "resistor",
+      "instanceId": "r-pulldown",
+      "position": { "x": 140, "y": 160 },
+      "config": { "resistance": 10000 }
+    },
+    {
+      "plugin": "led",
+      "instanceId": "led-1",
+      "position": { "x": 520, "y": 140 }
+    },
+    {
+      "plugin": "resistor",
+      "instanceId": "r-led",
+      "position": { "x": 440, "y": 140 },
+      "config": { "resistance": 220 }
+    }
+  ],
+  "wires": [
+    {
+      "id": "w-power",
+      "from": { "parentId": "usb-1", "pinId": "vcc", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "5V", "parentType": "board" }
+    },
+    {
+      "id": "w-gnd",
+      "from": { "parentId": "usb-1", "pinId": "gnd", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    },
+    {
+      "id": "w-btn-vcc",
+      "from": { "parentId": "arduino-uno", "pinId": "5V", "parentType": "board" },
+      "to": { "parentId": "btn-1", "pinId": "terminal-a", "parentType": "component" }
+    },
+    {
+      "id": "w-btn-d2",
+      "from": { "parentId": "btn-1", "pinId": "terminal-b", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "D2", "parentType": "board" }
+    },
+    {
+      "id": "w-pulldown",
+      "from": { "parentId": "arduino-uno", "pinId": "D2", "parentType": "board" },
+      "to": { "parentId": "r-pulldown", "pinId": "terminal-a", "parentType": "component" }
+    },
+    {
+      "id": "w-pulldown-gnd",
+      "from": { "parentId": "r-pulldown", "pinId": "terminal-b", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    },
+    {
+      "id": "w-d13-r",
+      "from": { "parentId": "arduino-uno", "pinId": "D13", "parentType": "board" },
+      "to": { "parentId": "r-led", "pinId": "terminal-a", "parentType": "component" }
+    },
+    {
+      "id": "w-r-led",
+      "from": { "parentId": "r-led", "pinId": "terminal-b", "parentType": "component" },
+      "to": { "parentId": "led-1", "pinId": "anode", "parentType": "component" }
+    },
+    {
+      "id": "w-led-gnd",
+      "from": { "parentId": "led-1", "pinId": "cathode", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    }
+  ]
+}

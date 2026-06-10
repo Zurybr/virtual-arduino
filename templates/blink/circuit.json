@@ -1,0 +1,56 @@
+{
+  "name": "Blink — LED on Pin 13",
+  "description": "The classic Arduino Blink example. LED connected to pin 13, USB connector providing power.",
+  "version": "1.0.0",
+  "board": {
+    "model": "ATMEGA328P",
+    "id": "arduino-uno",
+    "position": { "x": 300, "y": 200 }
+  },
+  "components": [
+    {
+      "plugin": "usb-connector",
+      "instanceId": "usb-1",
+      "position": { "x": 80, "y": 220 },
+      "config": { "connected": true }
+    },
+    {
+      "plugin": "led",
+      "instanceId": "led-1",
+      "position": { "x": 520, "y": 180 }
+    },
+    {
+      "plugin": "resistor",
+      "instanceId": "r1-220",
+      "position": { "x": 440, "y": 180 },
+      "config": { "resistance": 220 }
+    }
+  ],
+  "wires": [
+    {
+      "id": "w1",
+      "from": { "parentId": "usb-1", "pinId": "vcc", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "5V", "parentType": "board" }
+    },
+    {
+      "id": "w2",
+      "from": { "parentId": "usb-1", "pinId": "gnd", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    },
+    {
+      "id": "w3",
+      "from": { "parentId": "arduino-uno", "pinId": "D13", "parentType": "board" },
+      "to": { "parentId": "r1-220", "pinId": "terminal-a", "parentType": "component" }
+    },
+    {
+      "id": "w4",
+      "from": { "parentId": "r1-220", "pinId": "terminal-b", "parentType": "component" },
+      "to": { "parentId": "led-1", "pinId": "anode", "parentType": "component" }
+    },
+    {
+      "id": "w5",
+      "from": { "parentId": "led-1", "pinId": "cathode", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    }
+  ]
+}

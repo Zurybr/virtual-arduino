@@ -1,0 +1,76 @@
+{
+  "name": "Servo Sweep — PWM Motor Control",
+  "description": "Servo motor on pin 9 sweeps back and forth. Demonstrates PWM motor control. USB connector for power.",
+  "version": "1.0.0",
+  "board": {
+    "model": "ATMEGA328P",
+    "id": "arduino-uno",
+    "position": { "x": 300, "y": 200 }
+  },
+  "components": [
+    {
+      "plugin": "usb-connector",
+      "instanceId": "usb-1",
+      "position": { "x": 80, "y": 220 },
+      "config": { "connected": true }
+    },
+    {
+      "plugin": "servo",
+      "instanceId": "servo-1",
+      "position": { "x": 520, "y": 160 }
+    },
+    {
+      "plugin": "led",
+      "instanceId": "led-status",
+      "position": { "x": 520, "y": 80 }
+    },
+    {
+      "plugin": "resistor",
+      "instanceId": "r-status",
+      "position": { "x": 440, "y": 80 },
+      "config": { "resistance": 220 }
+    }
+  ],
+  "wires": [
+    {
+      "id": "w-power",
+      "from": { "parentId": "usb-1", "pinId": "vcc", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "5V", "parentType": "board" }
+    },
+    {
+      "id": "w-gnd",
+      "from": { "parentId": "usb-1", "pinId": "gnd", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    },
+    {
+      "id": "w-servo-vcc",
+      "from": { "parentId": "arduino-uno", "pinId": "5V", "parentType": "board" },
+      "to": { "parentId": "servo-1", "pinId": "vcc", "parentType": "component" }
+    },
+    {
+      "id": "w-servo-gnd",
+      "from": { "parentId": "servo-1", "pinId": "gnd", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    },
+    {
+      "id": "w-servo-signal",
+      "from": { "parentId": "arduino-uno", "pinId": "D9", "parentType": "board" },
+      "to": { "parentId": "servo-1", "pinId": "signal", "parentType": "component" }
+    },
+    {
+      "id": "w-led-r",
+      "from": { "parentId": "arduino-uno", "pinId": "D13", "parentType": "board" },
+      "to": { "parentId": "r-status", "pinId": "terminal-a", "parentType": "component" }
+    },
+    {
+      "id": "w-r-led",
+      "from": { "parentId": "r-status", "pinId": "terminal-b", "parentType": "component" },
+      "to": { "parentId": "led-status", "pinId": "anode", "parentType": "component" }
+    },
+    {
+      "id": "w-led-gnd",
+      "from": { "parentId": "led-status", "pinId": "cathode", "parentType": "component" },
+      "to": { "parentId": "arduino-uno", "pinId": "GND", "parentType": "board" }
+    }
+  ]
+}

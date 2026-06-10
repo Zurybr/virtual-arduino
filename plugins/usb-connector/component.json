@@ -1,0 +1,27 @@
+{
+  "name": "usb-connector",
+  "displayName": "USB Connector (Type-B)",
+  "version": "1.0.0",
+  "description": "USB Type-B power connector. Provides 5V power to the board and indicates connection status. Toggling this component simulates plugging/unplugging the USB cable.",
+  "author": "arduino-simulator",
+  "license": "MIT",
+  "engines": { "simulator": "^0.1.0", "pluginApi": "^0.1.0" },
+  "hardware": {
+    "pins": [
+      { "id": "vcc", "type": "power", "label": "5V Out", "voltage": 5 },
+      { "id": "gnd", "type": "ground", "label": "GND" },
+      { "id": "d-plus", "type": "digital-output", "label": "D+" },
+      { "id": "d-minus", "type": "digital-output", "label": "D-" }
+    ],
+    "power": { "minVoltage": 4.75, "maxVoltage": 5.25, "typicalCurrent": "500mA" },
+    "protocols": ["gpio"]
+  },
+  "assets": { "icon": "assets/icon.svg" },
+  "main": "dist/index.js",
+  "permissions": ["gpio:read", "gpio:write"],
+  "category": "power",
+  "tags": ["usb", "power", "connector", "type-b"],
+  "config": {
+    "connected": { "type": "boolean", "default": true, "label": "USB Connected" }
+  }
+}

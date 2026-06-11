@@ -14,6 +14,8 @@ import {
   type Wire,
   type PinConnectionPoint,
   type InteractionMode,
+  type ContextMenuState,
+  type WireDrawingState,
 } from "./types";
 
 interface WorkspaceProps {
@@ -29,6 +31,8 @@ interface WorkspaceProps {
   ) => void;
   onWireDeleted: (id: string) => void;
   onComponentSelected: (id: string | null) => void;
+  contextMenuState?: ContextMenuState | null;
+  onContextMenuChange?: (state: ContextMenuState | null) => void;
 }
 
 function getPinWorldPosition(
@@ -67,6 +71,8 @@ export const Workspace: React.FC<WorkspaceProps> = ({
   onWireCreated,
   onWireDeleted,
   onComponentSelected,
+  contextMenuState: _contextMenuState,
+  onContextMenuChange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -75,14 +81,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
   const [scale, setScale] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [mode, setMode] = useState<InteractionMode>("select");
-  const [wireDrawing, setWireDrawing] = useState<{
-    startComponentId: string;
-    startPinId: string;
-    startX: number;
-    startY: number;
-    currentX: number;
-    currentY: number;
-  } | null>(null);
+  const [wireDrawing, setWireDrawing] = useState<WireDrawingState | null>(null);
   const [rubberBand, setRubberBand] = useState<{
     x1: number;
     y1: number;
@@ -533,6 +532,26 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     [],
   );
 
+  const handleStageContextMenu = useCallback(
+    (e: KonvaEventObject<PointerEvent>) => {
+      e.evt.preventDefault();
+      // Only show canvas context menu if clicking on empty space
+      const clickedOnEmpty =
+        e.target === e.target.getStage() ||
+        e.target.name() === "dot-grid" ||
+        e.target.getParent()?.name() === "dot-grid-layer";
+      if (clickedOnEmpty && onContextMenuChange) {
+        const evt = e.evt as unknown as PointerEvent;
+        onContextMenuChange({
+          x: evt.clientX,
+          y: evt.clientY,
+          targetType: "canvas",
+        });
+      }
+    },
+    [onContextMenuChange],
+  );
+
   const previewWire = wireDrawing
     ? {
         start: { x: wireDrawing.startX, y: wireDrawing.startY },
@@ -562,6 +581,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         onMouseDown={handleStageMouseDown}
         onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
+        onContextMenu={handleStageContextMenu}
         draggable={false}
       >
         <Layer name="grid-layer">
@@ -584,11 +604,26 @@ export const Workspace: React.FC<WorkspaceProps> = ({
               pins={componentPins[comp.id] ?? []}
               selected={selectedIds.includes(comp.id)}
               dragging={false}
+              wireDrawing={wireDrawing}
               onDragStart={handleComponentDragStart}
               onDragEnd={handleComponentDragEnd}
               onSelect={handleComponentSelect}
               onPinClick={handlePinClick}
               onPinHover={handlePinHover}
+              onContextMenu={(e, targetType, targetId) => {
+                if (onContextMenuChange) {
+                  const componentType = targetType === "component"
+                    ? components.find((c) => c.id === targetId)?.type
+                    : undefined;
+                  onContextMenuChange({
+                    x: e.evt.clientX,
+                    y: e.evt.clientY,
+                    targetType,
+                    targetId,
+                    componentType,
+                  });
+                }
+              }}
             />
           ))}
         </Layer>

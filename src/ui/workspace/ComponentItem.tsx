@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   Group,
   Rect,
@@ -9,22 +9,30 @@ import {
   Arc,
 } from "react-konva";
 import type { KonvaEventObject } from "konva/lib/Node";
+import type Konva from "konva";
 import type {
   PlacedComponent,
   PinConnectionPoint,
+  WireDrawingState,
 } from "./types";
 import { PIN_RADIUS, PIN_HOVER_RADIUS, PIN_COLORS } from "./types";
+import {
+  applyComponentHover,
+  removeComponentHover,
+} from "./hover-effects";
 
 interface ComponentItemProps {
   component: PlacedComponent;
   pins: PinConnectionPoint[];
   selected: boolean;
   dragging: boolean;
+  wireDrawing: WireDrawingState | null;
   onDragStart: (id: string) => void;
   onDragEnd: (id: string, x: number, y: number) => void;
   onSelect: (id: string) => void;
   onPinClick: (componentId: string, pinId: string) => void;
   onPinHover: (componentId: string, pinId: string | null) => void;
+  onContextMenu?: (e: KonvaEventObject<PointerEvent>, targetType: "component" | "pin", targetId?: string) => void;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1185,19 +1193,54 @@ const PinPoint: React.FC<{
   componentId: string;
   onPinClick: (componentId: string, pinId: string) => void;
   onPinHover: (componentId: string, pinId: string | null) => void;
-}> = React.memo(({ pin, componentId, onPinClick, onPinHover }) => {
+  wireDrawing: WireDrawingState | null;
+  onContextMenu?: (e: KonvaEventObject<PointerEvent>, targetId?: string) => void;
+}> = React.memo(({ pin, componentId, onPinClick, onPinHover, wireDrawing, onContextMenu }) => {
   const [hovered, setHovered] = useState(false);
+  const circleRef = useRef<Konva.Circle>(null);
   const color = PIN_COLORS[pin.type] ?? "#999";
+
+  // During wire-drawing mode, determine if this pin is a valid target
+  const isWireDrawingTarget = wireDrawing !== null;
+  const isSourcePin =
+    wireDrawing !== null &&
+    wireDrawing.startComponentId === componentId &&
+    wireDrawing.startPinId === pin.id;
+  const isValidTarget =
+    wireDrawing !== null &&
+    !(wireDrawing.startComponentId === componentId && wireDrawing.startPinId === pin.id);
+
+  // Get the display color for wire-drawing mode
+  const getDisplayFill = (): string => {
+    if (!isWireDrawingTarget) return color;
+    if (isSourcePin) return "#00ff00"; // source pin glows green
+    return isValidTarget ? "#00ff00" : "#ff0000"; // different pin on same comp = green (different pin), same pin = red (handled above)
+  };
+
+  const getDisplayRadius = (): number => {
+    return hovered ? PIN_HOVER_RADIUS : PIN_RADIUS;
+  };
+
+  const getDisplayStroke = (): string => {
+    if (isWireDrawingTarget) return getDisplayFill();
+    return hovered ? "#fff" : color;
+  };
+
+  const getDisplayStrokeWidth = (): number => {
+    if (isWireDrawingTarget) return 3;
+    return hovered ? 2 : 1;
+  };
 
   return (
     <Group>
       <Circle
+        ref={circleRef}
         x={pin.x}
         y={pin.y}
-        radius={hovered ? PIN_HOVER_RADIUS : PIN_RADIUS}
-        fill={color}
-        stroke={hovered ? "#fff" : color}
-        strokeWidth={hovered ? 2 : 1}
+        radius={getDisplayRadius()}
+        fill={getDisplayFill()}
+        stroke={getDisplayStroke()}
+        strokeWidth={getDisplayStrokeWidth()}
         opacity={hovered ? 1 : 0.85}
         hitStrokeWidth={12}
         onMouseEnter={(e: KonvaEventObject<MouseEvent>) => {
@@ -1217,6 +1260,12 @@ const PinPoint: React.FC<{
           }
         }}
         onClick={() => onPinClick(componentId, pin.id)}
+        onContextMenu={(e: KonvaEventObject<PointerEvent>) => {
+          e.evt.preventDefault();
+          if (onContextMenu) {
+            onContextMenu(e, pin.id);
+          }
+        }}
       />
       {hovered && (
         <Text
@@ -1294,7 +1343,11 @@ export const ComponentItem: React.FC<ComponentItemProps> = ({
   onSelect,
   onPinClick,
   onPinHover,
+  wireDrawing,
+  onContextMenu,
 }) => {
+  const groupRef = useRef<Konva.Group>(null);
+
   const handleDragStart = useCallback(() => {
     onDragStart(component.id);
   }, [component.id, onDragStart]);
@@ -1310,11 +1363,46 @@ export const ComponentItem: React.FC<ComponentItemProps> = ({
     onSelect(component.id);
   }, [component.id, onSelect]);
 
+  const handleMouseEnter = useCallback((e: KonvaEventObject<MouseEvent>) => {
+    const group = e.currentTarget;
+    if (group) {
+      applyComponentHover(group as unknown as Parameters<typeof applyComponentHover>[0]);
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback((e: KonvaEventObject<MouseEvent>) => {
+    const group = e.currentTarget;
+    if (group) {
+      removeComponentHover(group as unknown as Parameters<typeof removeComponentHover>[0]);
+    }
+  }, []);
+
+  const handleContextMenu = useCallback(
+    (e: KonvaEventObject<PointerEvent>) => {
+      e.evt.preventDefault();
+      if (onContextMenu) {
+        onContextMenu(e, "component", component.id);
+      }
+    },
+    [onContextMenu, component.id],
+  );
+
+  const handlePinContextMenu = useCallback(
+    (e: KonvaEventObject<PointerEvent>, pinId?: string) => {
+      e.evt.preventDefault();
+      if (onContextMenu) {
+        onContextMenu(e, "pin", pinId);
+      }
+    },
+    [onContextMenu],
+  );
+
   const isProtoboard = component.type === "protoboard";
   const sel = selected ? getSelectionBounds(component.type) : null;
 
   return (
     <Group
+      ref={groupRef}
       x={component.x}
       y={component.y}
       rotation={component.rotation}
@@ -1323,6 +1411,9 @@ export const ComponentItem: React.FC<ComponentItemProps> = ({
       onDragEnd={handleDragEnd}
       onClick={handleClick}
       onTap={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onContextMenu={handleContextMenu}
     >
       {isProtoboard ? (
         <ProtoboardBody componentId={component.id} onPinClick={onPinClick} />
@@ -1342,6 +1433,8 @@ export const ComponentItem: React.FC<ComponentItemProps> = ({
             componentId={component.id}
             onPinClick={onPinClick}
             onPinHover={onPinHover}
+            wireDrawing={wireDrawing}
+            onContextMenu={handlePinContextMenu}
           />
         ))}
       {sel && (

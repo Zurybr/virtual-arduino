@@ -53,6 +53,34 @@ export const MAX_ZOOM = 4.0;
 
 export type InteractionMode = "select" | "wire" | "pan";
 
+export interface ContextMenuState {
+  x: number;
+  y: number;
+  targetType: "canvas" | "component" | "wire" | "pin";
+  targetId?: string;
+  componentType?: string;
+}
+
+export interface WireDrawingState {
+  startComponentId: string;
+  startPinId: string;
+  startX: number;
+  startY: number;
+  currentX: number;
+  currentY: number;
+}
+
+export const HOVER_SHADOW = {
+  color: "#00BFFF",
+  blur: 15,
+  offset: { x: 0, y: 0 },
+  opacity: 0.6,
+} as const;
+
+export const WIRE_MODE_VALID_COLOR = "#00ff00";
+export const WIRE_MODE_INVALID_COLOR = "#ff0000";
+export const HOVER_TRANSITION_MS = 150;
+
 export const PIN_COLORS: Record<string, string> = {
   power: "#e53935",
   ground: "#424242",

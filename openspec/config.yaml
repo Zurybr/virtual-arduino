@@ -1,0 +1,60 @@
+# openspec/config.yaml
+schema: spec-driven
+
+project: virtual-arduino
+
+context: |
+  Tech stack: TypeScript 6.x (strict) + Rust (Tauri v2), Vite 8, Vitest 4, React 19, Konva/react-konva (canvas)
+  Architecture: Tauri v2 hybrid — Rust backend (virtual serial ports), TS frontend (simulation engine in Web Worker, UI, plugins)
+  Testing: Vitest (unit + integration), cargo test (Rust serial layer), jsdom environment, coverage configured
+  Style: ESLint + @typescript-eslint, Prettier (double quotes, trailing comma, 100 char width, 2-space indent)
+
+strict_tdd: true
+
+testing:
+  runner: vitest
+  runner_command: "npm test"
+  runner_watch: "npm run test:watch"
+  coverage: true
+  coverage_command: "npx vitest run --coverage"
+  coverage_reporters: [text, json, html]
+  coverage_include: ["src/**/*.ts"]
+  linter_command: "npm run lint"
+  typecheck_command: "npm run typecheck"
+  formatter_command: "npm run format"
+  test_layers:
+    unit: true
+    integration: true
+    e2e: false
+  test_directories:
+    - tests/simulation/
+    - tests/components/
+    - tests/integration/
+    - tests/plugins/
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Reference relevant plan.md section from specs/001-arduino-virtual-simulator/
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - All simulation components must implement the Component interface
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+    - Separate Rust backend changes from TypeScript frontend changes
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+    - Mark Rust vs TypeScript tasks explicitly
+  apply:
+    - Follow existing code patterns
+    tdd: true
+    test_command: "npm test"
+  verify:
+    test_command: "npm test"
+    build_command: "npm run build"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
